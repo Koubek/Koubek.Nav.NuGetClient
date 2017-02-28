@@ -1,0 +1,71 @@
+OBJECT Table 83632 NuGet Respository
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=KOUBEK,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=NuGet Respository;
+               ESP=Respositorio NuGet];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=ENU=Code;
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=ENU=Description }
+    { 5   ;   ;Active              ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Active;
+                                                              ESP=Activo] }
+    { 11  ;   ;Url Part 1          ;Text250       ;CaptionML=[ENU=Url Part 1;
+                                                              ESP=Parte Url 1] }
+    { 12  ;   ;Url Part 2          ;Text250       ;CaptionML=[ENU=Url Part 2;
+                                                              ESP=Parte Url 2] }
+    { 13  ;   ;Url Part 3          ;Text250       ;CaptionML=[ENU=Url Part 3;
+                                                              ESP=Parte Url 3] }
+    { 14  ;   ;Url Part 4          ;Text250       ;CaptionML=[ENU=Url Part 4;
+                                                              ESP=Parte Url 4] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      HasSetup@1000 : Boolean;
+
+    LOCAL PROCEDURE "***PUBLICS***"@3();
+    BEGIN
+    END;
+
+    PROCEDURE SaveUrl@4(UrlP@1000 : Text);
+    BEGIN
+      "Url Part 1" := COPYSTR(UrlP,1,MAXSTRLEN("Url Part 1"));
+      "Url Part 2" := COPYSTR(UrlP,MAXSTRLEN("Url Part 1") + 1,MAXSTRLEN("Url Part 2"));
+      "Url Part 3" := COPYSTR(UrlP,MAXSTRLEN("Url Part 1") + MAXSTRLEN("Url Part 2") + 1,MAXSTRLEN("Url Part 3"));
+      "Url Part 4" := COPYSTR(UrlP,MAXSTRLEN("Url Part 1") + MAXSTRLEN("Url Part 2") + MAXSTRLEN("Url Part 3") + 1,MAXSTRLEN("Url Part 4"));
+    END;
+
+    PROCEDURE GetUrl@5() RetValO : Text;
+    BEGIN
+      TESTFIELD("Url Part 1");
+      RetValO := "Url Part 1" + "Url Part 2" + "Url Part 3" + "Url Part 4";
+      EXIT(RetValO);
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@1();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}

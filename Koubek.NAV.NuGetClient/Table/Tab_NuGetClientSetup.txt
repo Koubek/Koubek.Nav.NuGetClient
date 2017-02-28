@@ -1,0 +1,67 @@
+OBJECT Table 83631 NuGet Client Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=KOUBEK,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=ENU=NuGet Client Setup;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=ENU=Primary Key }
+    { 5   ;   ;Default Server Code ;Code20        ;TableRelation="NuGet Respository";
+                                                   CaptionML=ENU=Default Server Code }
+    { 6   ;   ;Default Server Description;Text50  ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("NuGet Respository".Description WHERE (Code=FIELD(Default Server Code)));
+                                                   TableRelation="NuGet Respository";
+                                                   CaptionML=ENU=Default Server Description;
+                                                   Editable=No }
+    { 11  ;   ;Repository Dataset Max. Size;Integer;
+                                                   InitValue=500;
+                                                   CaptionML=ENU=Repository Dataset Max. Size;
+                                                   MinValue=0 }
+    { 15  ;   ;Installation Subpath;Text250       ;InitValue=Add-ins\NUGET\;
+                                                   CaptionML=ENU=Installation Subpath }
+    { 21  ;   ;Allow Pre-releases  ;Boolean       ;CaptionML=[ENU=Allow Pre-releases;
+                                                              ESP=Permitir pre-releases] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      HasSetup@1000 : Boolean;
+
+    LOCAL PROCEDURE "***PUBLICS***"@1();
+    BEGIN
+    END;
+
+    PROCEDURE GetSetup@2(ForceReloadP@1000 : Boolean);
+    BEGIN
+      IF (HasSetup) AND (NOT ForceReloadP) THEN
+        EXIT;
+
+      GET;
+
+      HasSetup := TRUE;
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@3();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}

@@ -1,0 +1,67 @@
+OBJECT Page 83636 NuGet Package Versions
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=KOUBEK,NGT;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=ENU=NuGet Packages;
+    LinksAllowed=No;
+    SourceTable=Table83636;
+    PageType=ListPart;
+    SourceTableTemporary=Yes;
+    ActionList=ACTIONS
+    {
+      { 7       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Title }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=Description }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr=Version }
+
+  }
+  CODE
+  {
+    VAR
+      NgtCliMgt@1000 : Codeunit 83631;
+      PckgDestPath@1001 : Text;
+      Text001@1002 : TextConst 'ENU=Done!';
+
+    PROCEDURE SetSharedRec@1(VAR NgtPckgEntryVersionP@1000 : TEMPORARY Record 83636);
+    BEGIN
+      NgtPckgEntryVersionP.COPY(Rec,TRUE);
+    END;
+
+    PROCEDURE GetVersionNo@3() : Text;
+    BEGIN
+      TESTFIELD("Package ID");
+      TESTFIELD(Version);
+
+      EXIT(Version);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

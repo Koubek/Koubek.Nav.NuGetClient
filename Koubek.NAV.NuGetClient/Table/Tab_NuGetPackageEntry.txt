@@ -1,0 +1,46 @@
+OBJECT Table 83635 NuGet Package Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=KOUBEK,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=ENU=NuGet Server;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Package ID          ;Text200       ;CaptionML=[ENU=Package ID;
+                                                              ESP=Id paquete];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Title               ;Text250       ;CaptionML=[ENU=Title;
+                                                              ESP=T¡tulo] }
+    { 5   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESP=Descripci¢n] }
+  }
+  KEYS
+  {
+    {    ;Package ID                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE "***PUBLICS***"@3();
+    BEGIN
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@1();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}

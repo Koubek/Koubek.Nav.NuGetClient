@@ -1,0 +1,129 @@
+OBJECT Page 83635 NuGet Packages
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=KOUBEK,NGT;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=NuGet Packages;
+    SourceTable=Table83635;
+    PageType=Worksheet;
+    SourceTableTemporary=Yes;
+    OnOpenPage=BEGIN
+                 InitPackageList;
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 7       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;ActionGroup }
+      { 9       ;2   ;Action    ;
+                      CaptionML=[ENU=Install Package;
+                                 ESP=Instalar paquete];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Installments;
+                      OnAction=BEGIN
+                                 InstallPackage;
+                               END;
+                                }
+      { 12      ;2   ;Action    ;
+                      CaptionML=[ENU=Install Package Version;
+                                 ESP=Instalar versi¢n paquete];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Installments;
+                      OnAction=BEGIN
+                                 InstallPackageVersion;
+                               END;
+                                }
+      { 13      ;2   ;Separator  }
+      { 11      ;2   ;Action    ;
+                      CaptionML=[ENU=Update Package List;
+                                 ESP=Actualizar la lista];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Refresh;
+                      OnAction=BEGIN
+                                 InitPackageList;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 6   ;1   ;Field     ;
+                CaptionML=ENU=Package Installation Path;
+                SourceExpr=PckgDestPath }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                Editable=FALSE;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Package ID" }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Title }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=Description }
+
+    { 10  ;1   ;Part      ;
+                Name=PckgVersionList;
+                SubPageLink=Package ID=FIELD(Package ID);
+                PagePartID=Page83636;
+                PartType=Page }
+
+  }
+  CODE
+  {
+    VAR
+      NgtCliMgt@1000 : Codeunit 83631;
+      NgtPckgList@1004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      PckgDestPath@1001 : Text;
+      Text001@1002 : TextConst 'ENU=Done!';
+
+    LOCAL PROCEDURE InstallPackage@2();
+    BEGIN
+      TESTFIELD(Description);
+      NgtCliMgt.InstallPackage("Package ID",PckgDestPath);
+
+      MESSAGE(Text001);
+    END;
+
+    LOCAL PROCEDURE InstallPackageVersion@1();
+    VAR
+      VersionL@1000 : Text;
+    BEGIN
+      TESTFIELD(Description);
+
+      VersionL := CurrPage.PckgVersionList.PAGE.GetVersionNo;
+      NgtCliMgt.InstallPackageVersion("Package ID",VersionL,PckgDestPath);
+
+      MESSAGE(Text001);
+    END;
+
+    LOCAL PROCEDURE InitPackageList@3();
+    VAR
+      NgtPckgEntryVersionTMPL@1000 : TEMPORARY Record 83636;
+    BEGIN
+      CurrPage.PckgVersionList.PAGE.SetSharedRec(NgtPckgEntryVersionTMPL);
+
+      PckgDestPath := NgtCliMgt.GetDefaultPackageInstallationPath;
+      NgtCliMgt.GetPackagesFromDefaultServer(Rec,NgtPckgEntryVersionTMPL,NgtPckgList,'');
+    END;
+
+    BEGIN
+    END.
+  }
+}
