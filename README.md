@@ -18,3 +18,8 @@ I am going to test and eventually fix the objects soon.
 * All required libraries will be deployed automatically during the previous step. NAV setups will be created as well.
 * Open PAGE: **NuGet Packages**
 * Select a package + press button **Install** (or select a specific package and version + **Install package version**)
+
+
+# To-do
+* Add possibility to install libraries on the client side as well.
+* Package lists (deploy automatically all packages from the list and their dependencies).
