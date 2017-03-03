@@ -1,3 +1,720 @@
+OBJECT Table 83631 NuGet Client Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/03/17;
+    Time=21:00:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=ENU=NuGet Client Setup;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=ENU=Primary Key }
+    { 5   ;   ;Default Server Code ;Code20        ;TableRelation="NuGet Respository";
+                                                   CaptionML=ENU=Default Server Code }
+    { 6   ;   ;Default Server Description;Text50  ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("NuGet Respository".Description WHERE (Code=FIELD(Default Server Code)));
+                                                   TableRelation="NuGet Respository";
+                                                   CaptionML=ENU=Default Server Description;
+                                                   Editable=No }
+    { 11  ;   ;Repository Dataset Max. Size;Integer;
+                                                   InitValue=500;
+                                                   CaptionML=ENU=Repository Dataset Max. Size;
+                                                   MinValue=0 }
+    { 15  ;   ;Installation Subpath;Text250       ;InitValue=Add-ins\NuGet\;
+                                                   CaptionML=ENU=Installation Subpath }
+    { 21  ;   ;Allow Pre-releases  ;Boolean       ;CaptionML=[ENU=Allow Pre-releases;
+                                                              ESP=Permitir pre-releases] }
+    { 99  ;   ;Run in Debug Mode   ;Boolean       ;CaptionML=[ENU=Run in Debug Mode;
+                                                              ESP=Ejecuciï¿½n en modo debug] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      HasSetup@1000 : Boolean;
+
+    LOCAL PROCEDURE "***PUBLICS***"@1();
+    BEGIN
+    END;
+
+    PROCEDURE GetSetup@2(ForceReloadP@1000 : Boolean);
+    BEGIN
+      IF (HasSetup) AND (NOT ForceReloadP) THEN
+        EXIT;
+
+      GET;
+
+      HasSetup := TRUE;
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@3();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Table 83632 NuGet Respository
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/03/17;
+    Time=21:00:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=NuGet Respository;
+               ESP=Respositorio NuGet];
+    LookupPageID=Page83632;
+    DrillDownPageID=Page83632;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=ENU=Code;
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=ENU=Description }
+    { 5   ;   ;Active              ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Active;
+                                                              ESP=Activo] }
+    { 11  ;   ;Url Part 1          ;Text250       ;CaptionML=[ENU=Url Part 1;
+                                                              ESP=Parte Url 1] }
+    { 12  ;   ;Url Part 2          ;Text250       ;CaptionML=[ENU=Url Part 2;
+                                                              ESP=Parte Url 2] }
+    { 13  ;   ;Url Part 3          ;Text250       ;CaptionML=[ENU=Url Part 3;
+                                                              ESP=Parte Url 3] }
+    { 14  ;   ;Url Part 4          ;Text250       ;CaptionML=[ENU=Url Part 4;
+                                                              ESP=Parte Url 4] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      HasSetup@1000 : Boolean;
+
+    LOCAL PROCEDURE "***PUBLICS***"@3();
+    BEGIN
+    END;
+
+    PROCEDURE SaveUrl@4(UrlP@1000 : Text);
+    BEGIN
+      "Url Part 1" := COPYSTR(UrlP,1,MAXSTRLEN("Url Part 1"));
+      "Url Part 2" := COPYSTR(UrlP,MAXSTRLEN("Url Part 1") + 1,MAXSTRLEN("Url Part 2"));
+      "Url Part 3" := COPYSTR(UrlP,MAXSTRLEN("Url Part 1") + MAXSTRLEN("Url Part 2") + 1,MAXSTRLEN("Url Part 3"));
+      "Url Part 4" := COPYSTR(UrlP,MAXSTRLEN("Url Part 1") + MAXSTRLEN("Url Part 2") + MAXSTRLEN("Url Part 3") + 1,MAXSTRLEN("Url Part 4"));
+    END;
+
+    PROCEDURE GetUrl@5() RetValO : Text;
+    BEGIN
+      TESTFIELD("Url Part 1");
+      RetValO := "Url Part 1" + "Url Part 2" + "Url Part 3" + "Url Part 4";
+      EXIT(RetValO);
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@1();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Table 83635 NuGet Package Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=ENU=NuGet Server;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Package ID          ;Text200       ;CaptionML=[ENU=Package ID;
+                                                              ESP=Id paquete];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Title               ;Text250       ;CaptionML=[ENU=Title;
+                                                              ESP=Tï¿½tulo] }
+    { 5   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESP=Descripciï¿½n] }
+  }
+  KEYS
+  {
+    {    ;Package ID                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE "***PUBLICS***"@3();
+    BEGIN
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@1();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Table 83636 NuGet Package Entry Version
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=ENU=NuGet Server;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Package ID          ;Text200       ;CaptionML=[ENU=Package ID;
+                                                              ESP=Id paquete];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Version             ;Text200       ;CaptionML=[ENU=Version;
+                                                              ESP=Versiï¿½n] }
+    { 4   ;   ;Title               ;Text250       ;CaptionML=[ENU=Title;
+                                                              ESP=Tï¿½tulo] }
+    { 5   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESP=Descripciï¿½n] }
+    { 101 ;   ;Pckg. List Index    ;Integer       ;CaptionML=[ENU=Package List Index;
+                                                              ESP=Indï¿½ce paquete en la lista];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Package ID,Version                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE "***PUBLICS***"@3();
+    BEGIN
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@1();
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Report 83631 NuGet Setup Init.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=NuGet Setup Initialization;
+               ESP=Inicializaciï¿½n config. NuGet];
+    ProcessingOnly=Yes;
+    OnPreReport=BEGIN
+                  TestExistingSetup;
+                END;
+
+    UseRequestPage=No;
+  }
+  DATASET
+  {
+    { 1   ;    ;DataItem;InitSetup     ;
+               DataItemTable=Table2000000026;
+               DataItemTableView=SORTING(Number)
+                                 ORDER(Ascending)
+                                 WHERE(Number=CONST(1));
+               OnAfterGetRecord=BEGIN
+                                  // Create default configs.
+                                  NuGetInitSetupDLLs.InitDefaultSetupData_Default;
+                                  // Deploy dependencies (DLLs)
+                                  NuGetInitSetupDLLs.CreateMissingDllFiles;
+
+                                  // Create secondary repository configurations (to be able download dependencies automatically).
+                                  CreateRepo('NUGET','Oficial servidor NuGet','https://www.nuget.org/api/v2/');
+                                  CreateRepo('Microsoft and .NET','Microsoft and .NET','https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/');
+
+                                  IF GUIALLOWED THEN BEGIN
+                                    MESSAGE(Text002);
+                                  END;
+                                END;
+                                 }
+
+  }
+  REQUESTPAGE
+  {
+    PROPERTIES
+    {
+    }
+    CONTROLS
+    {
+    }
+  }
+  LABELS
+  {
+  }
+  CODE
+  {
+    VAR
+      NuGetRepo@1000 : Record 83632;
+      NuGetClSetup@1001 : Record 83631;
+      Text001@1002 : TextConst 'ENU=You can not run this procedure as there are some NuGet configurations present in the DB.;ESP=No se puede ejecutar este procedimiento porque ya existe alguna configuraciï¿½n NuGet en la BBDD.';
+      NuGetInitSetupDLLs@1100225000 : Codeunit 83632;
+      Text002@1100225001 : TextConst 'ENU=Default setups and DLL have been created. The module is ready to starting using it.;ESP=Inicializaciï¿½n configuraciones por defecto y librerï¿½as DLL se ha acabado con ï¿½xito. El mï¿½dulo estï¿½ preparado para su uso.';
+
+    LOCAL PROCEDURE TestExistingSetup@1();
+    BEGIN
+      NuGetRepo.RESET;
+      NuGetClSetup.RESET;
+
+      IF (NuGetRepo.COUNT <> 0) OR (NuGetClSetup.COUNT <> 0) THEN
+        ERROR(Text001);
+    END;
+
+    LOCAL PROCEDURE CreateRepo@9(CodeP@1000 : Code[20];Description@1001 : Text;UrlP@1002 : Text);
+    BEGIN
+      NuGetRepo.RESET;
+
+      NuGetRepo.INIT;
+      NuGetRepo.Code := CodeP;
+      NuGetRepo.TESTFIELD(Code);
+      NuGetRepo.Description := Description;
+      NuGetRepo.Active := TRUE;
+      NuGetRepo.SaveUrl(UrlP);
+      NuGetRepo.INSERT(TRUE);
+    END;
+
+    LOCAL PROCEDURE CreateClientConfig@10(RepoCodeP@1000 : Code[20]);
+    BEGIN
+      NuGetClSetup.RESET;
+
+      NuGetClSetup.INIT;
+      NuGetClSetup."Primary Key" := '';
+      NuGetClSetup."Default Server Code" := RepoCodeP;
+      NuGetClSetup."Repository Dataset Max. Size" := 500;
+      NuGetClSetup."Installation Subpath" := 'Add-ins\NuGet\';
+      NuGetClSetup.INSERT(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+  RDLDATA
+  {
+  }
+}
+
+OBJECT Codeunit 83631 NuGet Client Mgt.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/03/17;
+    Time=21:00:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      NuGetCliSetup@1001 : Record 83631;
+      DotNetExceptionHandler@1007 : Codeunit 1291;
+      PckRepoFact@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
+      PckRepo@1004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
+      AgrRepo@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+      PckSrc@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageSource";
+      PckMgr@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager";
+      Text001@1005 : TextConst 'ENU=#1###############\#2###############;ESP=#1###############\#2###############';
+      Text002@1006 : TextConst 'ENU=Repository has not been initialized!';
+      Text003@1100225000 : TextConst 'ENU=Cannot write Object-to-JSON debug information as there is missing Newtonsoft library on the server.';
+      Text004@1100225001 : TextConst 'ENU=Cannot load some packages: %1;ESP=Error al cargar uno de los paquetes: %1';
+      NetPckgList@1100225004 : DotNet "'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Linq.IQueryable`1";
+      NetPckgListEnum@1100225005 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.IEnumerator";
+      PckCounter@1100225003 : Integer;
+
+    LOCAL PROCEDURE "***PUBLICS***"@2();
+    BEGIN
+    END;
+
+    PROCEDURE GetDefaultPackageInstallationPath@9() RetValO : Text;
+    BEGIN
+      NuGetCliSetup.GetSetup(TRUE);
+      NuGetCliSetup.TESTFIELD("Installation Subpath");
+      RetValO := GetPackageInstallationPath(NuGetCliSetup."Installation Subpath");
+      EXIT(RetValO);
+    END;
+
+    PROCEDURE GetPackageInstallationPath@8(SubpathP@1000 : Text) RetValO : Text;
+    VAR
+      AssL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Reflection.Assembly";
+    BEGIN
+      //AssL.GetExecutingAssembly().
+      RetValO := APPLICATIONPATH + SubpathP;
+      EXIT(RetValO);
+    END;
+
+    PROCEDURE GetPackagesFromDefaultServer@6(VAR NgtPckgEntryP@1003 : Record 83635;VAR NgtPckgEntryVersionP@1002 : Record 83636;VAR NetPckgListP@1004 : DotNet "'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Linq.IQueryable`1";PckFilterP@1000 : Text;LoadNextP@1100225000 : Boolean);
+    VAR
+      NgtSrvL@1001 : Record 83632;
+    BEGIN
+      NuGetCliSetup.GetSetup(TRUE);
+      NuGetCliSetup.TESTFIELD("Default Server Code");
+
+      GetPackagesByNgtSrvCode(NgtPckgEntryP,NgtPckgEntryVersionP,NetPckgListP,NuGetCliSetup."Default Server Code",PckFilterP,LoadNextP);
+    END;
+
+    [TryFunction]
+    PROCEDURE GetPackagesByNgtSrvCode@5(VAR NgtPckgEntryP@1003 : Record 83635;VAR NgtPckgEntryVersionP@1004 : Record 83636;VAR NetPckgListP@1005 : DotNet "'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Linq.IQueryable`1";NgtCodeP@1002 : Code[20];PckFilterP@1000 : Text;LoadNextP@1100225000 : Boolean);
+    VAR
+      NuGetRepoL@1001 : Record 83632;
+      ExceptionL@1006 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Exception";
+    BEGIN
+      NuGetRepoL.GET(NgtCodeP);
+      NuGetRepoL.TESTFIELD(Active,TRUE);
+
+      IF NOT GetPackagesByUrl(NgtPckgEntryP,NgtPckgEntryVersionP,NetPckgListP,NuGetRepoL.GetUrl,PckFilterP,LoadNextP) THEN BEGIN
+        DotNetExceptionHandler.Collect;
+        ERROR(Text004,DotNetExceptionHandler.GetMessage)
+      END;
+    END;
+
+    [TryFunction]
+    PROCEDURE GetPackagesByUrl@3(VAR NgtPckgEntryP@1003 : Record 83635;VAR NgtPckgEntryVersionP@1008 : Record 83636;VAR NetPckgListP@1009 : DotNet "'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Linq.IQueryable`1";RepoUrlP@1002 : Text;PckFilterP@1000 : Text;LoadNextP@1100225007 : Boolean);
+    VAR
+      PckL@1001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackage";
+      VersionL@1006 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";
+      NetStrL@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.String";
+      ObjL@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object";
+      FrameworksL@1100225013 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      WndL@1004 : Dialog;
+      VarL@1100225009 : Variant;
+      PckIdL@1100225004 : Text;
+      PckId2L@1100225006 : Text;
+      PckTitleL@1100225003 : Text;
+      PckDescrL@1100225005 : Text;
+      ExitWithNextPckIdL@1100225001 : Boolean;
+      PckCounterL@1100225008 : Integer;
+    BEGIN
+      NuGetCliSetup.GetSetup(FALSE);
+
+      IF (NOT LoadNextP) THEN BEGIN
+        PckCounter := 0;
+
+        IF (PckFilterP = '') THEN BEGIN
+          InitRepoVariables(RepoUrlP);
+        END ELSE BEGIN
+          CreateAggregateRepo(AgrRepo);
+        END;
+
+        NgtPckgEntryP.RESET;
+        NgtPckgEntryP.DELETEALL;
+
+        NgtPckgEntryVersionP.RESET;
+        NgtPckgEntryVersionP.DELETEALL;
+      END;
+
+      WndL.OPEN(Text001);
+
+      IF ((NOT ISNULL(PckRepo)) OR (NOT ISNULL(AgrRepo))) THEN BEGIN
+
+        IF (NOT LoadNextP) THEN BEGIN
+          IF (PckFilterP = '') THEN BEGIN
+            NetPckgList := PckRepo.GetPackages;
+          END ELSE BEGIN
+            InstantiateGenericList(FrameworksL,'System.String');
+            NetPckgList := AgrRepo.Search(PckFilterP,FrameworksL,NuGetCliSetup."Allow Pre-releases");
+          END;
+          NetPckgListEnum := NetPckgList.GetEnumerator;
+        END;
+
+        IF (NOT ISNULL(NetPckgListEnum)) THEN BEGIN
+
+          WHILE NetPckgListEnum.MoveNext DO BEGIN
+            PckL := NetPckgListEnum.Current;
+
+            PckCounter += 1;
+            PckCounterL += 1;
+
+            DebugTextToFile(FORMAT(PckCounterL),PckCounterL,'nugetlog.start');
+
+            IF (ISNULL(PckL)) THEN
+              ERROR('PckL is NULL');
+
+            IF (ISNULL(PckL.Version)) THEN
+              ERROR('PckL.Version is NULL');
+            VersionL := PckL.Version;
+
+            // To be able compare null/empty .Net string we need to convert it to NAV text variable.
+            // Then we can compare it as en empty text.
+            PckIdL := PckL.Id;
+            IF (PckIdL = '') THEN
+              ERROR('PckL.Id is NULL or empty');
+
+            IF ((ExitWithNextPckIdL) AND (PckIdL <> PckId2L)) THEN BEGIN
+              WndL.CLOSE;
+              EXIT;
+            END;
+
+            PckTitleL := PckL.Title;
+            PckDescrL := PckL.Description;
+
+            NgtPckgEntryP.INIT;
+            NgtPckgEntryP."Package ID" := COPYSTR(PckIdL,1,MAXSTRLEN(NgtPckgEntryP."Package ID"));
+            IF (PckTitleL <> '') THEN BEGIN
+              NgtPckgEntryP.Title := COPYSTR(PckTitleL,1,MAXSTRLEN(NgtPckgEntryP.Title));
+            END;
+            IF (PckDescrL <> '') THEN BEGIN
+              NgtPckgEntryP.Description := COPYSTR(PckDescrL,1,MAXSTRLEN(NgtPckgEntryP.Description));
+            END;
+            IF NOT NgtPckgEntryP.INSERT THEN NgtPckgEntryP.MODIFY;
+
+            NgtPckgEntryVersionP.INIT;
+            NgtPckgEntryVersionP."Package ID" := NgtPckgEntryP."Package ID";
+            NgtPckgEntryVersionP.Version := VersionL.ToNormalizedString;
+            IF (PckTitleL <> '') THEN BEGIN
+              NgtPckgEntryVersionP.Title := COPYSTR(PckTitleL,1,MAXSTRLEN(NgtPckgEntryVersionP.Title));
+            END;
+            IF (PckDescrL <> '') THEN BEGIN
+              NgtPckgEntryVersionP.Description := COPYSTR(PckDescrL,1,MAXSTRLEN(NgtPckgEntryVersionP.Description));
+            END;
+            NgtPckgEntryVersionP."Pckg. List Index" := PckCounter;
+            IF NOT NgtPckgEntryVersionP.INSERT THEN NgtPckgEntryVersionP.MODIFY;
+
+            DebugTextToFile(FORMAT(PckCounterL),PckCounterL,'nugetlog.end');
+
+            WndL.UPDATE(1,NgtPckgEntryP."Package ID");
+            WndL.UPDATE(2,PckCounter);
+
+            PckId2L := PckIdL;
+
+            IF (NOT ExitWithNextPckIdL) THEN BEGIN
+              IF (NuGetCliSetup."Repository Dataset Max. Size" > 0) AND
+                 (PckCounterL >= NuGetCliSetup."Repository Dataset Max. Size")
+              THEN BEGIN
+                // Load all version entries of the package ID being processed right now.
+                ExitWithNextPckIdL := TRUE;
+              END;
+            END;
+          END;
+        END;
+      END;
+
+      WndL.CLOSE;
+    END;
+
+    PROCEDURE InstallPackage@7(PckgIdP@1001 : Text;DestPathP@1000 : Text);
+    VAR
+      AgrRepoL@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+    BEGIN
+      TestRepVars();
+      CreateAggregateRepo(AgrRepoL);
+      //PckMgr := PckMgr.PackageManager(PckRepo,DestPathP);
+      PckMgr := PckMgr.PackageManager(AgrRepoL,DestPathP);
+      PckMgr.InstallPackage(PckgIdP);
+    END;
+
+    PROCEDURE InstallPackageVersion@12(PckgIdP@1001 : Text;VersionP@1002 : Text;DestPathP@1000 : Text);
+    VAR
+      VersionL@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";
+    BEGIN
+      VersionL := VersionL.Parse(VersionP);
+      InstallPackageVersion2(PckgIdP,VersionL,DestPathP);
+    END;
+
+    PROCEDURE InstallPackageVersion2@11(PckgIdP@1001 : Text;VersionP@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";DestPathP@1000 : Text);
+    VAR
+      AgrRepoL@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+    BEGIN
+      NuGetCliSetup.GetSetup(FALSE);
+
+      TestRepVars();
+      CreateAggregateRepo(AgrRepoL);
+      //PckMgr := PckMgr.PackageManager(PckRepo,DestPathP);
+      PckMgr := PckMgr.PackageManager(AgrRepoL,DestPathP);
+      PckMgr.InstallPackage(PckgIdP,VersionP,FALSE,NuGetCliSetup."Allow Pre-releases");
+    END;
+
+    LOCAL PROCEDURE "***PRIVATES***"@4();
+    BEGIN
+      // SECTION SEPARATOR
+    END;
+
+    LOCAL PROCEDURE InitRepoVariables@1(RepoUrlP@1000 : Text);
+    BEGIN
+      PckRepo := PckRepoFact.Default.CreateRepository(RepoUrlP);
+    END;
+
+    LOCAL PROCEDURE TestRepVars@13();
+    BEGIN
+      IF ISNULL(PckRepo) THEN
+        ERROR(Text002);
+    END;
+
+    LOCAL PROCEDURE CreateAggregateRepo@10(VAR AgrRepoP@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository");
+    VAR
+      NuGetRepoL@1002 : Record 83632;
+      NgtRepoListL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      PckRepoFactL@1004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
+      PckRepoL@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
+    BEGIN
+      //NgtRepoListL := NgtRepoListL.List;
+      SimpleGenericInitializer(NgtRepoListL,PckRepoL);
+
+      NuGetRepoL.SETRANGE(Active,TRUE);
+      IF NuGetRepoL.FINDSET THEN
+        REPEAT
+
+          CLEAR(PckRepoL);
+          CLEAR(PckRepoFactL);
+
+          PckRepoL := PckRepoFactL.Default.CreateRepository(NuGetRepoL.GetUrl);
+
+          NgtRepoListL.Add(PckRepoL);
+
+        UNTIL NuGetRepoL.NEXT = 0;
+
+      AgrRepoP := AgrRepoP.AggregateRepository(NgtRepoListL);
+    END;
+
+    LOCAL PROCEDURE SimpleGenericInitializer@14(GenericP@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object";ObjP@1003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object");
+    VAR
+      TypeL@1000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Type";
+      ArrayL@1002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Array";
+      ActivatorL@1004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Activator";
+    BEGIN
+      ArrayL := ArrayL.CreateInstance(GETDOTNETTYPE(TypeL),1);
+      ArrayL.SetValue(GETDOTNETTYPE(ObjP),0);
+
+      TypeL := GETDOTNETTYPE(GenericP);
+      TypeL := TypeL.MakeGenericType(ArrayL);
+
+      GenericP := ActivatorL.CreateInstance(TypeL);
+    END;
+
+    LOCAL PROCEDURE DebugObjToJson@1100225000(ObjP@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object";IndexP@1100225002 : Integer);
+    VAR
+      FileMgtL@1100225004 : Codeunit 419;
+      NSConvertL@1100225001 : DotNet "'Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed'.Newtonsoft.Json.JsonConvert";
+      JsonL@1100225003 : Text;
+    BEGIN
+      NuGetCliSetup.GetSetup(FALSE);
+      IF (NOT NuGetCliSetup."Run in Debug Mode") THEN
+        EXIT;
+
+      IF NOT CANLOADTYPE(NSConvertL) THEN
+        ERROR(Text003);
+
+      JsonL := NSConvertL.SerializeObject(ObjP);
+      DebugTextToFile(JsonL,IndexP,'nugetlog');
+    END;
+
+    LOCAL PROCEDURE DebugTextToFile@1100225001(TextP@1100225000 : Text;IndexP@1100225003 : Integer;ExtensionP@1100225002 : Text);
+    VAR
+      FileMgtL@1100225004 : Codeunit 419;
+      ServerFileHelperL@1100225006 : DotNet "'mscorlib'.System.IO.File";
+      ServerDirL@1100225007 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory";
+      NSConvertL@1100225001 : DotNet "'Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed'.Newtonsoft.Json.JsonConvert";
+      TmpFileL@1100225005 : Text;
+      DebugDirL@1100225008 : Text;
+    BEGIN
+      NuGetCliSetup.GetSetup(FALSE);
+      IF (NOT NuGetCliSetup."Run in Debug Mode") THEN
+        EXIT;
+
+      DebugDirL := 'C:\TEMP\NuGetForNavDebug\';
+
+      TmpFileL := FileMgtL.ServerTempFileName(ExtensionP);
+      ServerFileHelperL.AppendAllText(TmpFileL,TextP);
+
+      IF (NOT ServerDirL.Exists(DebugDirL)) THEN BEGIN
+        ServerDirL.CreateDirectory(DebugDirL);
+      END;
+
+      FileMgtL.CopyServerFile(TmpFileL,DebugDirL + FORMAT(IndexP,10) + '.' + ExtensionP,TRUE);
+      FileMgtL.DeleteServerFile(TmpFileL);
+    END;
+
+    LOCAL PROCEDURE InstantiateGenericList@1100225018(VAR ListP@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";TypeOfGenericP@1100225001 : Text);
+    VAR
+      TypeL@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Type";
+      NetActivatorL@1100225003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Activator";
+    BEGIN
+      TypeL := TypeL.GetType(
+        STRSUBSTNO('System.Collections.Generic.List`1[%1]',TypeOfGenericP));
+
+      ListP := NetActivatorL.CreateInstance(TypeL);
+    END;
+
+    EVENT PckMgr@1000::PackageInstalling@34(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
+    BEGIN
+    END;
+
+    EVENT PckMgr@1000::PackageInstalled@35(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
+    BEGIN
+    END;
+
+    EVENT PckMgr@1000::PackageUninstalling@36(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
+    BEGIN
+    END;
+
+    EVENT PckMgr@1000::PackageUninstalled@37(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
 OBJECT Codeunit 83632 NuGet Init Setup & DLLs
 {
   OBJECT-PROPERTIES
@@ -5,7 +722,7 @@ OBJECT Codeunit 83632 NuGet Init Setup & DLLs
     Date=16/02/17;
     Time=11:30:00;
     Modified=Yes;
-    Version List=KOUBEK,NGT;
+    Version List=JVN,NGT;
   }
   PROPERTIES
   {
@@ -22,7 +739,7 @@ OBJECT Codeunit 83632 NuGet Init Setup & DLLs
   {
     VAR
       NuGetClientMgt@1000 : Codeunit 83631;
-      Text001@1001 : TextConst 'ENU=Default setups and DLL have been created. The module is ready to starting using it.;ESP=Inicializaci¢n configuraciones por defecto y librer¡as DLL se ha acabado con ‚xito. El m¢dulo est  preparado para su uso.';
+      Text001@1001 : TextConst 'ENU=Default setups and DLL have been created. The module is ready to starting using it.;ESP=Inicializaciï¿½n configuraciones por defecto y librerï¿½as DLL se ha acabado con ï¿½xito. El mï¿½dulo estï¿½ preparado para su uso.';
 
     LOCAL PROCEDURE "***PUBLIC***"@11();
     BEGIN
@@ -7553,3 +8270,341 @@ OBJECT Codeunit 83632 NuGet Init Setup & DLLs
     END.
   }
 }
+
+OBJECT Page 83631 NuGet Client Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/03/17;
+    Time=21:00:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=NuGet Client Setup;
+               ESP=Configuraciï¿½n cliente NuGet];
+    SourceTable=Table83631;
+    PageType=Card;
+  }
+  CONTROLS
+  {
+    { 1100225000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100225001;1;Group  ;
+                Name=General;
+                GroupType=Group }
+
+    { 1100225002;2;Field  ;
+                SourceExpr="Default Server Code" }
+
+    { 1100225003;2;Field  ;
+                SourceExpr="Default Server Description" }
+
+    { 1100225004;2;Field  ;
+                SourceExpr="Repository Dataset Max. Size" }
+
+    { 1100225005;2;Field  ;
+                SourceExpr="Installation Subpath" }
+
+    { 1100225006;2;Field  ;
+                SourceExpr="Allow Pre-releases" }
+
+    { 1100225007;2;Field  ;
+                SourceExpr="Run in Debug Mode" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Page 83632 NuGet Respositories
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/03/17;
+    Time=21:00:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=NuGet Respositories;
+               ESP=Respositorios NuGet];
+    SourceTable=Table83632;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1100225000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100225001;1;Group  ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 1100225002;2;Field  ;
+                SourceExpr=Code }
+
+    { 1100225003;2;Field  ;
+                SourceExpr=Description }
+
+    { 1100225004;2;Field  ;
+                SourceExpr=Active }
+
+    { 1100225005;2;Field  ;
+                SourceExpr="Url Part 1" }
+
+    { 1100225006;2;Field  ;
+                SourceExpr="Url Part 2" }
+
+    { 1100225007;2;Field  ;
+                SourceExpr="Url Part 3" }
+
+    { 1100225008;2;Field  ;
+                SourceExpr="Url Part 4" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Page 83635 NuGet Packages
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/03/17;
+    Time=21:00:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=NuGet Packages;
+    SourceTable=Table83635;
+    PageType=Worksheet;
+    SourceTableTemporary=Yes;
+    OnOpenPage=BEGIN
+                 InitPackageList(FALSE);
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 7       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;ActionGroup }
+      { 1100225001;2 ;Action    ;
+                      CaptionML=[ENU=Load Next;
+                                 ESP=Cargar siguientes];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=NextSet;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 InitPackageList(TRUE);
+                               END;
+                                }
+      { 1100225000;2 ;Separator  }
+      { 9       ;2   ;Action    ;
+                      CaptionML=[ENU=Install Package;
+                                 ESP=Instalar paquete];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Installments;
+                      OnAction=BEGIN
+                                 InstallPackage;
+                               END;
+                                }
+      { 12      ;2   ;Action    ;
+                      CaptionML=[ENU=Install Package Version;
+                                 ESP=Instalar versiï¿½n paquete];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Installments;
+                      OnAction=BEGIN
+                                 InstallPackageVersion;
+                               END;
+                                }
+      { 13      ;2   ;Separator  }
+      { 11      ;2   ;Action    ;
+                      CaptionML=[ENU=Update Package List;
+                                 ESP=Actualizar la lista];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Refresh;
+                      OnAction=BEGIN
+                                 InitPackageList(FALSE);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 6   ;1   ;Field     ;
+                CaptionML=ENU=Package Installation Path;
+                SourceExpr=PckgDestPath }
+
+    { 1100225002;1;Field  ;
+                CaptionML=[ENU=Search Text;
+                           ESP=Texto bï¿½squeda];
+                SourceExpr=SearchText;
+                OnValidate=BEGIN
+                             OnSearchTextChage;
+                           END;
+                            }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                Editable=FALSE;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Package ID" }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Title }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=Description }
+
+    { 10  ;1   ;Part      ;
+                Name=PckgVersionList;
+                SubPageLink=Package ID=FIELD(Package ID);
+                PagePartID=Page83636;
+                PartType=Page }
+
+  }
+  CODE
+  {
+    VAR
+      NgtCliMgt@1000 : Codeunit 83631;
+      NgtPckgList@1004 : DotNet "'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Linq.IQueryable`1";
+      PckgDestPath@1001 : Text;
+      Text001@1002 : TextConst 'ENU=Done!';
+      SearchText@1100225000 : Text;
+      xSearchText@1100225001 : Text;
+
+    LOCAL PROCEDURE InstallPackage@2();
+    BEGIN
+      TESTFIELD(Description);
+      NgtCliMgt.InstallPackage("Package ID",PckgDestPath);
+
+      MESSAGE(Text001);
+    END;
+
+    LOCAL PROCEDURE InstallPackageVersion@1();
+    VAR
+      VersionL@1000 : Text;
+    BEGIN
+      TESTFIELD(Description);
+
+      VersionL := CurrPage.PckgVersionList.PAGE.GetVersionNo;
+      NgtCliMgt.InstallPackageVersion("Package ID",VersionL,PckgDestPath);
+
+      MESSAGE(Text001);
+    END;
+
+    LOCAL PROCEDURE InitPackageList@3(LoadNextP@1100225000 : Boolean);
+    VAR
+      NgtPckgEntryVersionTMPL@1000 : TEMPORARY Record 83636;
+    BEGIN
+      CurrPage.PckgVersionList.PAGE.SetSharedRec(NgtPckgEntryVersionTMPL);
+
+      PckgDestPath := NgtCliMgt.GetDefaultPackageInstallationPath;
+      NgtCliMgt.GetPackagesFromDefaultServer(Rec,NgtPckgEntryVersionTMPL,NgtPckgList,SearchText,LoadNextP);
+    END;
+
+    LOCAL PROCEDURE OnSearchTextChage@1100225000();
+    BEGIN
+      IF (SearchText = xSearchText) THEN
+        EXIT;
+
+      InitPackageList(FALSE);
+
+      xSearchText := SearchText;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Page 83636 NuGet Package Versions
+{
+  OBJECT-PROPERTIES
+  {
+    Date=16/02/17;
+    Time=11:30:00;
+    Modified=Yes;
+    Version List=JVN,NGT;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=ENU=NuGet Packages;
+    LinksAllowed=No;
+    SourceTable=Table83636;
+    PageType=ListPart;
+    SourceTableTemporary=Yes;
+    ActionList=ACTIONS
+    {
+      { 7       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Title }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=Description }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr=Version }
+
+  }
+  CODE
+  {
+    VAR
+      NgtCliMgt@1000 : Codeunit 83631;
+      PckgDestPath@1001 : Text;
+      Text001@1002 : TextConst 'ENU=Done!';
+
+    PROCEDURE SetSharedRec@1(VAR NgtPckgEntryVersionP@1000 : TEMPORARY Record 83636);
+    BEGIN
+      NgtPckgEntryVersionP.COPY(Rec,TRUE);
+    END;
+
+    PROCEDURE GetVersionNo@3() : Text;
+    BEGIN
+      TESTFIELD("Package ID");
+      TESTFIELD(Version);
+
+      EXIT(Version);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
