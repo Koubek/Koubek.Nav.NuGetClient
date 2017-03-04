@@ -21,5 +21,4 @@ I am going to test and eventually fix the objects soon.
 
 
 # To-do
-* Add possibility to install libraries on the client side as well.
 * Package lists (deploy automatically all packages from the list and their dependencies).
