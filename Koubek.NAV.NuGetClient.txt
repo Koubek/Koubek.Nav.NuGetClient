@@ -2,8 +2,8 @@ OBJECT Table 83631 NuGet Client Setup
 {
   OBJECT-PROPERTIES
   {
-    Date=03/03/17;
-    Time=21:00:00;
+    Date=04/03/17;
+    Time=14:30:00;
     Modified=Yes;
     Version List=JVN,NGT;
   }
@@ -26,12 +26,12 @@ OBJECT Table 83631 NuGet Client Setup
                                                    InitValue=500;
                                                    CaptionML=ENU=Repository Dataset Max. Size;
                                                    MinValue=0 }
-    { 15  ;   ;Installation Subpath;Text250       ;InitValue=Add-ins\NuGet\;
+    { 15  ;   ;Installation Subpath;Text250       ;InitValue=Add-ins\NUGET\;
                                                    CaptionML=ENU=Installation Subpath }
     { 21  ;   ;Allow Pre-releases  ;Boolean       ;CaptionML=[ENU=Allow Pre-releases;
                                                               ESP=Permitir pre-releases] }
     { 99  ;   ;Run in Debug Mode   ;Boolean       ;CaptionML=[ENU=Run in Debug Mode;
-                                                              ESP=Ejecuciï¿½n en modo debug] }
+                                                              ESP=Ejecuci¢n en modo debug] }
   }
   KEYS
   {
@@ -162,9 +162,9 @@ OBJECT Table 83635 NuGet Package Entry
                                                               ESP=Id paquete];
                                                    NotBlank=Yes }
     { 4   ;   ;Title               ;Text250       ;CaptionML=[ENU=Title;
-                                                              ESP=Tï¿½tulo] }
+                                                              ESP=T¡tulo] }
     { 5   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
-                                                              ESP=Descripciï¿½n] }
+                                                              ESP=Descripci¢n] }
   }
   KEYS
   {
@@ -209,13 +209,13 @@ OBJECT Table 83636 NuGet Package Entry Version
                                                               ESP=Id paquete];
                                                    NotBlank=Yes }
     { 2   ;   ;Version             ;Text200       ;CaptionML=[ENU=Version;
-                                                              ESP=Versiï¿½n] }
+                                                              ESP=Versi¢n] }
     { 4   ;   ;Title               ;Text250       ;CaptionML=[ENU=Title;
-                                                              ESP=Tï¿½tulo] }
+                                                              ESP=T¡tulo] }
     { 5   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
-                                                              ESP=Descripciï¿½n] }
+                                                              ESP=Descripci¢n] }
     { 101 ;   ;Pckg. List Index    ;Integer       ;CaptionML=[ENU=Package List Index;
-                                                              ESP=Indï¿½ce paquete en la lista];
+                                                              ESP=Ind¡ce paquete en la lista];
                                                    Editable=No }
   }
   KEYS
@@ -245,15 +245,15 @@ OBJECT Report 83631 NuGet Setup Init.
 {
   OBJECT-PROPERTIES
   {
-    Date=16/02/17;
-    Time=11:30:00;
+    Date=04/03/17;
+    Time=14:30:00;
     Modified=Yes;
     Version List=JVN,NGT;
   }
   PROPERTIES
   {
     CaptionML=[ENU=NuGet Setup Initialization;
-               ESP=Inicializaciï¿½n config. NuGet];
+               ESP=Inicializaci¢n config. NuGet];
     ProcessingOnly=Yes;
     OnPreReport=BEGIN
                   TestExistingSetup;
@@ -263,20 +263,19 @@ OBJECT Report 83631 NuGet Setup Init.
   }
   DATASET
   {
-    { 1   ;    ;DataItem;InitSetup     ;
+    { 1   ;    ;DataItem;InitSetup           ;
                DataItemTable=Table2000000026;
                DataItemTableView=SORTING(Number)
                                  ORDER(Ascending)
                                  WHERE(Number=CONST(1));
                OnAfterGetRecord=BEGIN
                                   // Create default configs.
-                                  NuGetInitSetupDLLs.InitDefaultSetupData_Default;
+                                  NuGetInitSetupDLLs.InitDefaultSetupData('NUGET','https://www.nuget.org/api/v2/',Text003);
                                   // Deploy dependencies (DLLs)
-                                  NuGetInitSetupDLLs.CreateMissingDllFiles;
+                                  NuGetInitSetupDLLs.CreateServerMissingDllFiles;
 
                                   // Create secondary repository configurations (to be able download dependencies automatically).
-                                  CreateRepo('NUGET','Oficial servidor NuGet','https://www.nuget.org/api/v2/');
-                                  CreateRepo('Microsoft and .NET','Microsoft and .NET','https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/');
+                                  CreateRepo('Microsoft and .NET',Text004,'https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/');
 
                                   IF GUIALLOWED THEN BEGIN
                                     MESSAGE(Text002);
@@ -302,9 +301,11 @@ OBJECT Report 83631 NuGet Setup Init.
     VAR
       NuGetRepo@1000 : Record 83632;
       NuGetClSetup@1001 : Record 83631;
-      Text001@1002 : TextConst 'ENU=You can not run this procedure as there are some NuGet configurations present in the DB.;ESP=No se puede ejecutar este procedimiento porque ya existe alguna configuraciï¿½n NuGet en la BBDD.';
+      Text001@1002 : TextConst 'ENU=You can not run this procedure as there are some NuGet configurations present in the DB.;ESP=No se puede ejecutar este procedimiento porque ya existe alguna configuraci¢n NuGet en la BBDD.';
       NuGetInitSetupDLLs@1100225000 : Codeunit 83632;
-      Text002@1100225001 : TextConst 'ENU=Default setups and DLL have been created. The module is ready to starting using it.;ESP=Inicializaciï¿½n configuraciones por defecto y librerï¿½as DLL se ha acabado con ï¿½xito. El mï¿½dulo estï¿½ preparado para su uso.';
+      Text002@1100225001 : TextConst 'ENU=Default setups and DLL have been created. The module is ready to starting using it.;ESP=Inicializaci¢n configuraciones por defecto y librer¡as DLL se ha acabado con ‚xito. El m¢dulo est  preparado para su uso.';
+      Text003@1100225002 : TextConst 'ENU=Official NuGet repository;ESP=Repositorio oficial NuGet';
+      Text004@1100225003 : TextConst 'ENU=Microsoft and .NET Repository;ESP="Repositorio Microsoft y .NET "';
 
     LOCAL PROCEDURE TestExistingSetup@1();
     BEGIN
@@ -328,18 +329,6 @@ OBJECT Report 83631 NuGet Setup Init.
       NuGetRepo.INSERT(TRUE);
     END;
 
-    LOCAL PROCEDURE CreateClientConfig@10(RepoCodeP@1000 : Code[20]);
-    BEGIN
-      NuGetClSetup.RESET;
-
-      NuGetClSetup.INIT;
-      NuGetClSetup."Primary Key" := '';
-      NuGetClSetup."Default Server Code" := RepoCodeP;
-      NuGetClSetup."Repository Dataset Max. Size" := 500;
-      NuGetClSetup."Installation Subpath" := 'Add-ins\NuGet\';
-      NuGetClSetup.INSERT(TRUE);
-    END;
-
     BEGIN
     END.
   }
@@ -352,14 +341,15 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
 {
   OBJECT-PROPERTIES
   {
-    Date=03/03/17;
-    Time=21:00:00;
+    Date=04/03/17;
+    Time=14:30:00;
     Modified=Yes;
     Version List=JVN,NGT;
   }
   PROPERTIES
   {
     OnRun=BEGIN
+            GetClientDefaultPackageInstallationPath;
           END;
 
   }
@@ -368,6 +358,7 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
     VAR
       NuGetCliSetup@1001 : Record 83631;
       DotNetExceptionHandler@1007 : Codeunit 1291;
+      NuGetInitSetupDLLs@1100225006 : Codeunit 83632;
       PckRepoFact@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
       PckRepo@1004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
       AgrRepo@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
@@ -390,15 +381,35 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
       NuGetCliSetup.GetSetup(TRUE);
       NuGetCliSetup.TESTFIELD("Installation Subpath");
       RetValO := GetPackageInstallationPath(NuGetCliSetup."Installation Subpath");
+
       EXIT(RetValO);
     END;
 
     PROCEDURE GetPackageInstallationPath@8(SubpathP@1000 : Text) RetValO : Text;
-    VAR
-      AssL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Reflection.Assembly";
     BEGIN
-      //AssL.GetExecutingAssembly().
       RetValO := APPLICATIONPATH + SubpathP;
+
+      EXIT(RetValO);
+    END;
+
+    PROCEDURE GetClientDefaultPackageInstallationPath@1100225003() RetValO : Text;
+    BEGIN
+      NuGetCliSetup.GetSetup(TRUE);
+      NuGetCliSetup.TESTFIELD("Installation Subpath");
+      RetValO := GetClientPackageInstallationPath(NuGetCliSetup."Installation Subpath");
+
+      EXIT(RetValO);
+    END;
+
+    PROCEDURE GetClientPackageInstallationPath@1100225002(SubpathP@1000 : Text) RetValO : Text;
+    VAR
+      AssL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Reflection.Assembly" RUNONCLIENT;
+      PathL@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Path" RUNONCLIENT;
+    BEGIN
+      RetValO := AssL.GetExecutingAssembly().Location;
+      RetValO := PathL.GetDirectoryName(RetValO);
+      RetValO := PathL.Combine(RetValO,SubpathP);
+
       EXIT(RetValO);
     END;
 
@@ -435,6 +446,9 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
       NetStrL@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.String";
       ObjL@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object";
       FrameworksL@1100225013 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      NgtRepoListL@1100225012 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      PckRepoFactL@1100225011 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
+      PckRepoL@1100225010 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
       WndL@1004 : Dialog;
       VarL@1100225009 : Variant;
       PckIdL@1100225004 : Text;
@@ -452,7 +466,7 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
         IF (PckFilterP = '') THEN BEGIN
           InitRepoVariables(RepoUrlP);
         END ELSE BEGIN
-          CreateAggregateRepo(AgrRepo);
+          CreateAggregateRepo(AgrRepo,NgtRepoListL,PckRepoFactL,PckRepoL);
         END;
 
         NgtPckgEntryP.RESET;
@@ -494,7 +508,7 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
             VersionL := PckL.Version;
 
             // To be able compare null/empty .Net string we need to convert it to NAV text variable.
-            // Then we can compare it as en empty text.
+            // Then we can compare it as en empty NAV text.
             PckIdL := PckL.Id;
             IF (PckIdL = '') THEN
               ERROR('PckL.Id is NULL or empty');
@@ -551,36 +565,54 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
       WndL.CLOSE;
     END;
 
-    PROCEDURE InstallPackage@7(PckgIdP@1001 : Text;DestPathP@1000 : Text);
+    PROCEDURE InstallServerPackage@7(PckgIdP@1001 : Text;DestPathP@1000 : Text);
     VAR
-      AgrRepoL@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+      PckMgrL@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager";
+      AgrRepoL@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+      NgtRepoListL@1100225004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      PckRepoFactL@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
+      PckRepoL@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
     BEGIN
-      TestRepVars();
-      CreateAggregateRepo(AgrRepoL);
-      //PckMgr := PckMgr.PackageManager(PckRepo,DestPathP);
-      PckMgr := PckMgr.PackageManager(AgrRepoL,DestPathP);
-      PckMgr.InstallPackage(PckgIdP);
+      InstallPackage(PckgIdP,DestPathP,AgrRepoL,PckMgrL,NgtRepoListL,PckRepoFactL,PckRepoL);
     END;
 
-    PROCEDURE InstallPackageVersion@12(PckgIdP@1001 : Text;VersionP@1002 : Text;DestPathP@1000 : Text);
+    PROCEDURE InstallServerPackageVersion@12(PckgIdP@1001 : Text;VersionP@1002 : Text;DestPathP@1000 : Text);
     VAR
-      VersionL@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";
+      PckMgrL@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager";
+      AgrRepoL@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+      SemanticVersionL@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";
+      NgtRepoListL@1100225005 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
+      PckRepoFactL@1100225004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
+      PckRepoL@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
     BEGIN
-      VersionL := VersionL.Parse(VersionP);
-      InstallPackageVersion2(PckgIdP,VersionL,DestPathP);
+      InstallPackageVersion(PckgIdP,DestPathP,VersionP,SemanticVersionL,AgrRepoL,PckMgrL,NgtRepoListL,PckRepoFactL,PckRepoL);
     END;
 
-    PROCEDURE InstallPackageVersion2@11(PckgIdP@1001 : Text;VersionP@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";DestPathP@1000 : Text);
+    PROCEDURE InstallClientPackage@1100225009(PckgIdP@1001 : Text;DestPathP@1000 : Text);
     VAR
-      AgrRepoL@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";
+      PckMgrL@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager" RUNONCLIENT;
+      AgrRepoL@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository" RUNONCLIENT;
+      NgtRepoListL@1100225004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1" RUNONCLIENT;
+      PckRepoFactL@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory" RUNONCLIENT;
+      PckRepoL@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository" RUNONCLIENT;
     BEGIN
-      NuGetCliSetup.GetSetup(FALSE);
+      TestAndInitClientNuGetDlls;
 
-      TestRepVars();
-      CreateAggregateRepo(AgrRepoL);
-      //PckMgr := PckMgr.PackageManager(PckRepo,DestPathP);
-      PckMgr := PckMgr.PackageManager(AgrRepoL,DestPathP);
-      PckMgr.InstallPackage(PckgIdP,VersionP,FALSE,NuGetCliSetup."Allow Pre-releases");
+      InstallPackage(PckgIdP,DestPathP,AgrRepoL,PckMgrL,NgtRepoListL,PckRepoFactL,PckRepoL);
+    END;
+
+    PROCEDURE InstallClientPackageVersion@1100225008(PckgIdP@1001 : Text;VersionP@1002 : Text;DestPathP@1000 : Text);
+    VAR
+      PckMgrL@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager" RUNONCLIENT;
+      AgrRepoL@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository" RUNONCLIENT;
+      SemanticVersionL@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion" RUNONCLIENT;
+      NgtRepoListL@1100225005 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1" RUNONCLIENT;
+      PckRepoFactL@1100225004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory" RUNONCLIENT;
+      PckRepoL@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository" RUNONCLIENT;
+    BEGIN
+      TestAndInitClientNuGetDlls;
+
+      InstallPackageVersion(PckgIdP,DestPathP,VersionP,SemanticVersionL,AgrRepoL,PckMgrL,NgtRepoListL,PckRepoFactL,PckRepoL);
     END;
 
     LOCAL PROCEDURE "***PRIVATES***"@4();
@@ -593,36 +625,67 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
       PckRepo := PckRepoFact.Default.CreateRepository(RepoUrlP);
     END;
 
+    LOCAL PROCEDURE InstallPackage@1100225007(PckgIdP@1001 : Text;DestPathP@1000 : Text;VAR AgrRepoP@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";VAR PckMgrP@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager";VAR NgtRepoListP@1100225004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";VAR PckRepoFactP@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";VAR PckRepoP@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository");
+    BEGIN
+      TestRepVars();
+      CreateAggregateRepo(AgrRepoP,NgtRepoListP,PckRepoFactP,PckRepoP);
+      PckMgrP := PckMgrP.PackageManager(AgrRepoP,DestPathP);
+      PckMgrP.InstallPackage(PckgIdP);
+    END;
+
+    LOCAL PROCEDURE InstallPackageVersion@1100225006(PckgIdP@1001 : Text;VersionP@1002 : Text;DestPathP@1000 : Text;VAR SemanticVersionP@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";VAR AgrRepoP@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";VAR PckMgrP@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager";VAR NgtRepoListP@1100225005 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";VAR PckRepoFactP@1100225004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";VAR PckRepoP@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository");
+    BEGIN
+      SemanticVersionP := SemanticVersionP.Parse(VersionP);
+      InstallPackageVersion2(PckgIdP,DestPathP,SemanticVersionP,AgrRepoP,PckMgrP,NgtRepoListP,PckRepoFactP,PckRepoP);
+    END;
+
+    LOCAL PROCEDURE InstallPackageVersion2@1100225005(PckgIdP@1001 : Text;DestPathP@1100225000 : Text;VAR SemanticVersionP@1002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.SemanticVersion";VAR AgrRepoP@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";VAR PckMgrP@1100225002 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageManager";VAR NgtRepoListP@1100225005 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";VAR PckRepoFactP@1100225004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";VAR PckRepoP@1100225003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository");
+    BEGIN
+      NuGetCliSetup.GetSetup(FALSE);
+
+      TestRepVars();
+      CreateAggregateRepo(AgrRepoP,NgtRepoListP,PckRepoFactP,PckRepoP);
+      PckMgrP := PckMgrP.PackageManager(AgrRepoP,DestPathP);
+      PckMgrP.InstallPackage(PckgIdP,SemanticVersionP,FALSE,NuGetCliSetup."Allow Pre-releases");
+    END;
+
+    LOCAL PROCEDURE TestAndInitClientNuGetDlls@1100225004();
+    VAR
+      PckRepoFactL@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory" RUNONCLIENT;
+    BEGIN
+      IF CANLOADTYPE(PckRepoFactL) THEN
+        EXIT;
+
+      NuGetInitSetupDLLs.CreateClientMissingDllFiles;
+    END;
+
     LOCAL PROCEDURE TestRepVars@13();
     BEGIN
       IF ISNULL(PckRepo) THEN
         ERROR(Text002);
     END;
 
-    LOCAL PROCEDURE CreateAggregateRepo@10(VAR AgrRepoP@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository");
+    LOCAL PROCEDURE CreateAggregateRepo@10(VAR AgrRepoP@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.AggregateRepository";VAR NgtRepoListP@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";VAR PckRepoFactP@1100225001 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";VAR PckRepoP@1100225000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository");
     VAR
       NuGetRepoL@1002 : Record 83632;
-      NgtRepoListL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Generic.List`1";
-      PckRepoFactL@1004 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageRepositoryFactory";
-      PckRepoL@1003 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.IPackageRepository";
     BEGIN
       //NgtRepoListL := NgtRepoListL.List;
-      SimpleGenericInitializer(NgtRepoListL,PckRepoL);
+      SimpleGenericInitializer(NgtRepoListP,PckRepoP);
 
       NuGetRepoL.SETRANGE(Active,TRUE);
       IF NuGetRepoL.FINDSET THEN
         REPEAT
 
-          CLEAR(PckRepoL);
-          CLEAR(PckRepoFactL);
+          CLEAR(PckRepoP);
+          CLEAR(PckRepoFactP);
 
-          PckRepoL := PckRepoFactL.Default.CreateRepository(NuGetRepoL.GetUrl);
+          PckRepoP := PckRepoFactP.Default.CreateRepository(NuGetRepoL.GetUrl);
 
-          NgtRepoListL.Add(PckRepoL);
+          NgtRepoListP.Add(PckRepoP);
 
         UNTIL NuGetRepoL.NEXT = 0;
 
-      AgrRepoP := AgrRepoP.AggregateRepository(NgtRepoListL);
+      AgrRepoP := AgrRepoP.AggregateRepository(NgtRepoListP);
     END;
 
     LOCAL PROCEDURE SimpleGenericInitializer@14(GenericP@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object";ObjP@1003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Object");
@@ -694,22 +757,6 @@ OBJECT Codeunit 83631 NuGet Client Mgt.
       ListP := NetActivatorL.CreateInstance(TypeL);
     END;
 
-    EVENT PckMgr@1000::PackageInstalling@34(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
-    BEGIN
-    END;
-
-    EVENT PckMgr@1000::PackageInstalled@35(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
-    BEGIN
-    END;
-
-    EVENT PckMgr@1000::PackageUninstalling@36(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
-    BEGIN
-    END;
-
-    EVENT PckMgr@1000::PackageUninstalled@37(sender@1001 : Variant;e@1000 : DotNet "'NuGet.Core, Version=2.8.60717.93, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.NuGet.PackageOperationEventArgs");
-    BEGIN
-    END;
-
     BEGIN
     END.
   }
@@ -719,16 +766,16 @@ OBJECT Codeunit 83632 NuGet Init Setup & DLLs
 {
   OBJECT-PROPERTIES
   {
-    Date=16/02/17;
-    Time=11:30:00;
+    Date=04/03/17;
+    Time=14:30:00;
     Modified=Yes;
     Version List=JVN,NGT;
   }
   PROPERTIES
   {
     OnRun=BEGIN
-            InitDefaultSetupData_Default;
-            CreateMissingDllFiles;
+            CreateServerMissingDllFiles;
+            CreateClientMissingDllFiles;
 
             IF GUIALLOWED THEN
               MESSAGE(Text001);
@@ -739,45 +786,74 @@ OBJECT Codeunit 83632 NuGet Init Setup & DLLs
   {
     VAR
       NuGetClientMgt@1000 : Codeunit 83631;
-      Text001@1001 : TextConst 'ENU=Default setups and DLL have been created. The module is ready to starting using it.;ESP=Inicializaciï¿½n configuraciones por defecto y librerï¿½as DLL se ha acabado con ï¿½xito. El mï¿½dulo estï¿½ preparado para su uso.';
+      Text001@1001 : TextConst 'ENU=All DLLs have been created.;ESP=Inicializaci¢n librer¡as DLL se ha acabado con ‚xito.';
 
     LOCAL PROCEDURE "***PUBLIC***"@11();
     BEGIN
     END;
 
-    PROCEDURE InitDefaultSetupData_Default@8();
+    PROCEDURE InitDefaultSetupData@27(RepoCodeP@1002 : Code[20];UrlP@1003 : Text;DescriptionP@1004 : Text);
+    VAR
+      NuGetRespL@1000 : Record 83632;
+      NuGetClientSetupL@1001 : Record 83631;
     BEGIN
-      InitDefaultSetupData('PRIVATE','https://www.nuget.org/api/v2/','Change the URL and desc. to fit your req.');
+      NuGetRespL.INIT;
+      NuGetRespL.Code := RepoCodeP;
+      NuGetRespL.Description := DescriptionP;
+      NuGetRespL.Active := TRUE;
+      NuGetRespL.SaveUrl(UrlP);
+      NuGetRespL.INSERT;
+
+      NuGetClientSetupL.INIT;
+      NuGetClientSetupL."Default Server Code" := RepoCodeP;
+      NuGetClientSetupL."Installation Subpath" := STRSUBSTNO('Add-ins\%1\',RepoCodeP);
+      NuGetClientSetupL."Allow Pre-releases" := TRUE;
+      NuGetClientSetupL.INSERT;
     END;
 
-    PROCEDURE CreateMissingDllFiles@13();
+    PROCEDURE CreateServerMissingDllFiles@13();
+    VAR
+      ConvertL@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert";
+      FileL@1100225001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.File";
+      PathL@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Path";
+      DirL@1100225003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory";
     BEGIN
-      CreateFile(GetNuGetDll,NuGetClientMgt.GetDefaultPackageInstallationPath + '\NuGet\NuGet.Core.dll');
-      CreateFile(GetMicrosoftWebXmlTransformDll,NuGetClientMgt.GetDefaultPackageInstallationPath + '\NuGet\Microsoft.Web.XmlTransform.dll');
+      CreateMissingDllFiles(NuGetClientMgt.GetDefaultPackageInstallationPath,ConvertL,FileL,PathL,DirL);
+    END;
+
+    PROCEDURE CreateClientMissingDllFiles@1100225000();
+    VAR
+      ConvertL@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert" RUNONCLIENT;
+      FileL@1100225001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.File" RUNONCLIENT;
+      PathL@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Path" RUNONCLIENT;
+      DirL@1100225003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory" RUNONCLIENT;
+    BEGIN
+      CreateMissingDllFiles(NuGetClientMgt.GetClientDefaultPackageInstallationPath,ConvertL,FileL,PathL,DirL);
     END;
 
     LOCAL PROCEDURE "***PRIVATE***"@12();
     BEGIN
     END;
 
-    LOCAL PROCEDURE CreateFile@2(ContentP@1000 : Text;PathP@1003 : Text);
-    VAR
-      ConvertL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert";
-      FileL@1002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.File";
-      PathL@1004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Path";
-      DirNameL@1005 : Text;
+    LOCAL PROCEDURE CreateMissingDllFiles@1100225002(MasterInstallationPathP@1100225000 : Text;VAR ConvertP@1100225003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert";VAR FileP@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.File";VAR PathP@1100225001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Path";VAR DirP@1100225004 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory");
     BEGIN
-      DirNameL := PathL.GetDirectoryName(PathP);
-      CreateDirectory(DirNameL);
-
-      FileL.WriteAllBytes(PathP,ConvertL.FromBase64String(ContentP));
+      CreateFile(GetNuGetDll,MasterInstallationPathP + '\NuGet\NuGet.Core.dll',ConvertP,FileP,PathP,DirP);
+      CreateFile(GetMicrosoftWebXmlTransformDll,MasterInstallationPathP + '\NuGet\Microsoft.Web.XmlTransform.dll',ConvertP,FileP,PathP,DirP);
     END;
 
-    LOCAL PROCEDURE CreateDirectory@4(PathP@1000 : Text);
+    LOCAL PROCEDURE CreateFile@2(ContentP@1000 : Text;FullNameP@1003 : Text;VAR ConvertP@1100225002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert";VAR FileP@1100225001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.File";VAR PathP@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Path";VAR DirP@1100225003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory");
     VAR
-      DirL@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory";
+      DirNameL@1005 : Text;
     BEGIN
-      DirL.CreateDirectory(PathP);
+      DirNameL := PathP.GetDirectoryName(FullNameP);
+      CreateDirectory(DirNameL,DirP);
+
+      FileP.WriteAllBytes(FullNameP,ConvertP.FromBase64String(ContentP));
+    END;
+
+    LOCAL PROCEDURE CreateDirectory@4(PathP@1000 : Text;VAR DirP@1100225000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Directory");
+    BEGIN
+      DirP.CreateDirectory(PathP);
     END;
 
     LOCAL PROCEDURE GetNuGetDll@5() RetVal : Text;
@@ -8248,24 +8324,6 @@ OBJECT Codeunit 83632 NuGet Init Setup & DLLs
         'OXSQYAAAAA';
     END;
 
-    LOCAL PROCEDURE InitDefaultSetupData@27(RepoCodeP@1002 : Code[20];UrlP@1003 : Text;DescriptionP@1004 : Text);
-    VAR
-      NuGetRespL@1000 : Record 83632;
-      NuGetClientSetupL@1001 : Record 83631;
-    BEGIN
-      NuGetRespL.INIT;
-      NuGetRespL.Code := RepoCodeP;
-      NuGetRespL.Description := DescriptionP;
-      NuGetRespL.Active := TRUE;
-      NuGetRespL.SaveUrl(UrlP);
-      NuGetRespL.INSERT;
-
-      NuGetClientSetupL.INIT;
-      NuGetClientSetupL."Default Server Code" := RepoCodeP;
-      NuGetClientSetupL."Installation Subpath" := STRSUBSTNO('Add-ins\%1\',RepoCodeP);
-      NuGetClientSetupL.INSERT;
-    END;
-
     BEGIN
     END.
   }
@@ -8283,7 +8341,7 @@ OBJECT Page 83631 NuGet Client Setup
   PROPERTIES
   {
     CaptionML=[ENU=NuGet Client Setup;
-               ESP=Configuraciï¿½n cliente NuGet];
+               ESP=Configuraci¢n cliente NuGet];
     SourceTable=Table83631;
     PageType=Card;
   }
@@ -8382,8 +8440,8 @@ OBJECT Page 83635 NuGet Packages
 {
   OBJECT-PROPERTIES
   {
-    Date=03/03/17;
-    Time=21:00:00;
+    Date=04/03/17;
+    Time=14:30:00;
     Modified=Yes;
     Version List=JVN,NGT;
   }
@@ -8426,7 +8484,7 @@ OBJECT Page 83635 NuGet Packages
                                 }
       { 12      ;2   ;Action    ;
                       CaptionML=[ENU=Install Package Version;
-                                 ESP=Instalar versiï¿½n paquete];
+                                 ESP=Instalar versi¢n paquete];
                       Promoted=Yes;
                       PromotedIsBig=Yes;
                       Image=Installments;
@@ -8456,9 +8514,13 @@ OBJECT Page 83635 NuGet Packages
                 CaptionML=ENU=Package Installation Path;
                 SourceExpr=PckgDestPath }
 
+    { 1100225003;1;Field  ;
+                CaptionML=ENU=Package Client Installation Path;
+                SourceExpr=PckgDestClientPath }
+
     { 1100225002;1;Field  ;
                 CaptionML=[ENU=Search Text;
-                           ESP=Texto bï¿½squeda];
+                           ESP=Texto b£squeda];
                 SourceExpr=SearchText;
                 OnValidate=BEGIN
                              OnSearchTextChage;
@@ -8493,13 +8555,15 @@ OBJECT Page 83635 NuGet Packages
       NgtPckgList@1004 : DotNet "'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Linq.IQueryable`1";
       PckgDestPath@1001 : Text;
       Text001@1002 : TextConst 'ENU=Done!';
+      PckgDestClientPath@1100225002 : Text;
       SearchText@1100225000 : Text;
       xSearchText@1100225001 : Text;
 
     LOCAL PROCEDURE InstallPackage@2();
     BEGIN
       TESTFIELD(Description);
-      NgtCliMgt.InstallPackage("Package ID",PckgDestPath);
+      NgtCliMgt.InstallServerPackage("Package ID",PckgDestPath);
+      NgtCliMgt.InstallClientPackage("Package ID",PckgDestClientPath);
 
       MESSAGE(Text001);
     END;
@@ -8511,7 +8575,8 @@ OBJECT Page 83635 NuGet Packages
       TESTFIELD(Description);
 
       VersionL := CurrPage.PckgVersionList.PAGE.GetVersionNo;
-      NgtCliMgt.InstallPackageVersion("Package ID",VersionL,PckgDestPath);
+      NgtCliMgt.InstallServerPackageVersion("Package ID",VersionL,PckgDestPath);
+      NgtCliMgt.InstallClientPackageVersion("Package ID",VersionL,PckgDestClientPath);
 
       MESSAGE(Text001);
     END;
@@ -8523,6 +8588,8 @@ OBJECT Page 83635 NuGet Packages
       CurrPage.PckgVersionList.PAGE.SetSharedRec(NgtPckgEntryVersionTMPL);
 
       PckgDestPath := NgtCliMgt.GetDefaultPackageInstallationPath;
+      PckgDestClientPath := NgtCliMgt.GetClientDefaultPackageInstallationPath;
+
       NgtCliMgt.GetPackagesFromDefaultServer(Rec,NgtPckgEntryVersionTMPL,NgtPckgList,SearchText,LoadNextP);
     END;
 
